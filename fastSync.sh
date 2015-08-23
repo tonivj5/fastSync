@@ -4,12 +4,12 @@
 ### CREADO POR TONI VILLENA, tonivj5@gmail.com ###
 
 ## DIRECTORIO DE DROPBOX UPLOADER Y EL SCRIPT
-DBU="$HOME/Dropbox/dropbox_uploader.sh"
+export DBU="$HOME/Dropbox/dropbox_uploader.sh"
 ## DIRECTORIO REMOTO EN DROPBOX
 #DREMOTO="./PROYECTOS/"
-DREMOTO="/PROYECTOS/"
+export DREMOTO="/PROYECTOS/"
 ## DIRECTORIO LOCAL EN EL EQUIPO
-DLOCAL="$HOME/dlocal/"
+export DLOCAL="$HOME/dlocal/"
 ## NIVEL DE DIRECTORIO QUE QUEREMOS SUBIR, EJEMPLO ->
         ## DIRECTORIO LOCAL: /home/user/dropbox/test/hello.txt
                 ## NIVEL DE /home -> 1
@@ -18,7 +18,7 @@ DLOCAL="$HOME/dlocal/"
                 ## NIVEL DE /test -> 4
                 ## NIVEL DE /hello.txt -> 5
         ## DIRECTORIO REMOTO (DROPBOX): /test/hello.txt
-LVLD=5
+export LVLD=5
 
 function cambiarF() {
         if [ "$3" ]; then
@@ -34,7 +34,6 @@ function cambiarF() {
 }
 
 export -f cambiarF
-
 
 ## FUNCIÓN QUE EJECUTA LAS ÓRDENES QUE SERÁN EFECTUADAS EN DROPBOX
 function toDropbox() {
