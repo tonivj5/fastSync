@@ -1,3 +1,85 @@
+### MODIFICACIONES --- DEVELOPING
+
+function sync() {
+#       NDIRECTORIOS=$(echo $2|grep -o "\/"|wc -l)
+        case "$1" in
+        "download")
+#               echo -e "CACA "$2
+#               echo -e "LALA "$3
+                if [ $4 == "true" ]; then
+                        if [ ! -d "$3" ]; then
+                                echo -e "Creando directorio... "$3
+                                mkdir -p $3
+                        fi
+                else
+            if [ ! -d "$(dirname "$3")" ]; then
+                                echo -e "EL DIRECTORIO NO EXISTE"
+                                mkdir -p $(dirname "$3")
+                        fi
+                                $DBU download "$2" "$3"
+                                cambiarF "$2" "$3" "$5"
+                fi
+        ;;
+        "upload")
+
+        ;;
+        esac
+}
+
+
+function compararFecha() {
+
+    if [ "$3" ]; then
+                FECHAFREMOTO="$3"
+        else
+                FECHAFREMOTO=$(date -d "$($DBU metadata "$1"| sed 's/\",/\n/g'|grep modified|cut -d "\"" -f 4|cut -d "," -f 2)" +"%Y%m%d%H%M%S")
+        fi
+
+        if [ -f "$2" ]; then
+                echo -e "EL FICHERO EXISTE!!"
+                FECHAFLOCAL=$(date -d"$(stat "$2"|grep -y "modify"|awk '{print $2 " " $3}')" +"%Y%m%d%H%M%S")
+        else
+                echo -e "EL FICHERO LOCAL NO EXISTE"
+                FECHAFLOCAL="00000000000000"
+#               exit 1
+                #$DBU download $1 $DLOCAL$1
+#               sync "download" "$1" "$DLOCAL$1" "$4"
+#               return 1
+        fi
+
+        if [ "$4" == "true" ]; then
+                echo -e "ES UN DIRECTORIO"
+                sync "download" "$1" "$DLOCAL$1" "$4"
+                return 1
+        fi
+
+        echo -e "$FECHAFREMOTO"
+        echo -e "$FECHAFLOCAL"
+#       cambiarF "$2"
+
+        if [ $FECHAFREMOTO -gt $FECHAFLOCAL ]; then
+                echo 'El fichero remoto está más actualizado que el local'
+                sync "download" "$1" "$DLOCAL$1" "$4" "$FECHAFREMOTO"
+        elif [ $FECHAFREMOTO -lt $FECHAFLOCAL ]; then
+                echo 'El fichero local está más actualizado que el remoto'
+        else
+                echo 'El fichero es el mismo tanto en local como en remoto'
+        fi
+
+}
+
+#echo "$FECHAFREMOTO - $FECHAFLOCAL"
+
+
+function crearCursor() {
+        echo -e "Creando cursor..."
+        if [ $1 ]; then
+                echo $1 > $HOME/.latestCursor.txt
+        else
+                $DBU latest_cursor | sed -ne '3p' | cut -d "\"" -f 4 > $HOME/.latestCursor.txt
+        fi
+}
+
 while true; do
 
 if [[ -f $HOME/.latestCursor.txt && $(wc -l $HOME/.latestCursor.txt|awk '{print $1}') -eq 1 ]]; then
