@@ -20,6 +20,8 @@ export DLOCAL="$HOME/dlocal/"
         ## DIRECTORIO REMOTO (DROPBOX): /test/hello.txt
 export LVLD=5
 
+source ./fastSyncD.sh &
+
 function cambiarF() {
         if [ "$3" ]; then
                 FECHAFREMOTO="$3"
